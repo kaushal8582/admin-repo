@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Syne", "Plus Jakarta Sans", system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-sidebar: var(--sidebar);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-danger: var(--danger);
+}
+
+:root {
+  --cyan: #00d2ff;
+  --blue: #3a7bd5;
+  --purple: #8e2de2;
+  --gradient-brand: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 52%, var(--purple) 100%);
+  --gradient-brand-h: linear-gradient(90deg, var(--cyan) 0%, var(--blue) 50%, var(--purple) 100%);
+  --danger: #f87171;
+
+  --background: #070b14;
+  --surface: #0c1220;
+  --surface-elevated: #121a2e;
+  --sidebar: #090e18;
+
+  --primary: var(--cyan);
+  --foreground: #ffffff;
+  --muted: #94a3b8;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(0, 210, 255, 0.28);
+
+  --accent-soft: rgba(0, 210, 255, 0.08);
+  --accent-medium: rgba(58, 123, 213, 0.14);
+  --glow-cyan: rgba(0, 210, 255, 0.35);
+  --danger-soft: rgba(248, 113, 113, 0.12);
+  --table-row-hover: rgba(58, 123, 213, 0.04);
+  --input-focus-ring: rgba(0, 210, 255, 0.12);
+  --success: #34d399;
+  --warning: #fbbf24;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(58, 123, 213, 0.35);
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+.brand-gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-gradient-bg {
+  background: var(--gradient-brand);
+}

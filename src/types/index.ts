@@ -102,6 +102,8 @@ export interface PlatformUser {
   avatar?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  emailVerified?: boolean;
+  emailVerifiedAt?: string | null;
   [key: string]: unknown;
 }
 
@@ -219,9 +221,32 @@ export interface WithdrawalItem {
   };
   adminNote?: string | null;
   rejectionReason?: string | null;
+  transactionId?: string | null;
+  hasPaymentProof?: boolean;
+  reviewedAt?: string | null;
+  paidAt?: string | null;
+  processedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
   [key: string]: unknown;
+}
+
+export interface WithdrawalEvent {
+  id: string;
+  type: 'created' | 'status_changed' | 'note' | 'proof_uploaded';
+  fromStatus?: string | null;
+  toStatus?: string | null;
+  note?: string | null;
+  internal?: boolean;
+  actorType: 'user' | 'admin' | 'system';
+  actorName?: string | null;
+  transactionId?: string | null;
+  createdAt: string;
+}
+
+export interface WithdrawalDetail extends WithdrawalItem {
+  paymentProofUrl?: string | null;
+  timeline: WithdrawalEvent[];
 }
 
 export interface OgLinkItem {

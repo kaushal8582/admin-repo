@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
-import { getUser, suspendUser, unsuspendUser } from '../../api/users';
+import { getUser, suspendUser, unsuspendUser, verifyUserEmail } from '../../api/users';
 import { PageHeader } from '../../components/PageHeader';
 import { StatCard } from '../../components/StatCard';
 import { StatusBadge } from '../../components/StatusBadge';
@@ -23,7 +23,7 @@ export function UserDetailPage() {
   const { id = '' } = useParams();
   const { hasPermission } = useAuth();
   const qc = useQueryClient();
-  const [confirm, setConfirm] = useState<'suspend' | 'unsuspend' | null>(null);
+  const [confirm, setConfirm] = useState<'suspend' | 'unsuspend' | 'verify' | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['users', id],
@@ -32,12 +32,13 @@ export function UserDetailPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: async ({ action, reason }: { action: 'suspend' | 'unsuspend'; reason: string }) => {
+    mutationFn: async ({ action, reason }: { action: 'suspend' | 'unsuspend' | 'verify'; reason: string }) => {
+      if (action === 'verify') return verifyUserEmail(id);
       if (action === 'suspend') return suspendUser(id, reason);
       return unsuspendUser(id, reason);
     },
     onSuccess: () => {
-      toast.success(confirm === 'suspend' ? 'User suspended' : 'User unsuspended');
+      toast.success(confirm === 'suspend' ? 'User suspended' : confirm === 'verify' ? 'User email marked verified' : 'User unsuspended');
       setConfirm(null);
       void qc.invalidateQueries({ queryKey: ['users', id] });
     },
@@ -64,6 +65,11 @@ export function UserDetailPage() {
         actions={
           <>
             <StatusBadge status={data.status} />
+            {data.emailVerified === false && hasPermission('users:manage') && (
+              <button type="button" className="rounded-lg border border-border px-3 py-2 text-sm text-primary hover:bg-primary/10" onClick={() => setConfirm('verify')}>
+                Mark email verified
+              </button>
+            )}
             {suspended
               ? hasPermission('users:unsuspend') && (
                   <button
@@ -107,6 +113,10 @@ export function UserDetailPage() {
               <dd>{formatDate(data.createdAt)}</dd>
             </div>
             <div className="flex justify-between gap-4">
+              <dt className="text-muted">Email verification</dt>
+              <dd>{data.emailVerified === false ? 'Unverified' : 'Verified'}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
               <dt className="text-muted">User ID</dt>
               <dd className="truncate font-mono text-xs">{data.id}</dd>
             </div>
@@ -140,10 +150,11 @@ export function UserDetailPage() {
 
       <ConfirmDialog
         open={Boolean(confirm)}
-        title={confirm === 'suspend' ? 'Suspend user' : 'Unsuspend user'}
+        title={confirm === 'suspend' ? 'Suspend user' : confirm === 'verify' ? 'Mark email as verified' : 'Unsuspend user'}
+        description={confirm === 'verify' ? 'Only do this after independently confirming that this user controls the email address.' : undefined}
         requireReason={confirm === 'suspend'}
         danger={confirm === 'suspend'}
-        confirmLabel={confirm === 'suspend' ? 'Suspend' : 'Unsuspend'}
+        confirmLabel={confirm === 'suspend' ? 'Suspend' : confirm === 'verify' ? 'Mark verified' : 'Unsuspend'}
         loading={mutation.isPending}
         onClose={() => setConfirm(null)}
         onConfirm={async (reason) => {

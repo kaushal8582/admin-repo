@@ -31,6 +31,7 @@ interface DataTableProps<T> {
   onSortChange?: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
   toolbar?: ReactNode;
   rowActions?: (row: T) => ReactNode;
+  onRowClick?: (row: T) => void;
 }
 
 export function DataTable<T>({
@@ -52,6 +53,7 @@ export function DataTable<T>({
   onSortChange,
   toolbar,
   rowActions,
+  onRowClick,
 }: DataTableProps<T>) {
   const [localSearch, setLocalSearch] = useState(search);
   const totalPages = Math.max(1, Math.ceil(total / pageSize) || 1);
@@ -67,7 +69,10 @@ export function DataTable<T>({
       key: '_actions',
       header: '',
       render: (row: T) => (
-        <div className="flex justify-end gap-1 opacity-80 group-hover:opacity-100">
+        <div
+          className="flex justify-end gap-1 opacity-80 group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
           {rowActions(row)}
         </div>
       ),
@@ -156,7 +161,11 @@ export function DataTable<T>({
               data.map((row) => (
                 <tr
                   key={rowKey(row)}
-                  className="group border-t border-border hover:bg-[var(--table-row-hover)]"
+                  className={cn(
+                    'group border-t border-border hover:bg-[var(--table-row-hover)]',
+                    onRowClick && 'cursor-pointer'
+                  )}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
                 >
                   {cols.map((col) => (
                     <td key={col.key} className={cn('px-4 py-3 align-middle', col.className)}>

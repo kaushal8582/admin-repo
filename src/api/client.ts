@@ -125,6 +125,18 @@ export async function apiPatch<T>(url: string, body?: unknown): Promise<T> {
   return data.data;
 }
 
+const MULTIPART = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+export async function apiPostForm<T>(url: string, form: FormData): Promise<T> {
+  const { data } = await apiClient.post<ApiResponse<T>>(url, form, MULTIPART);
+  return data.data;
+}
+
+export async function apiPatchForm<T>(url: string, form: FormData): Promise<T> {
+  const { data } = await apiClient.patch<ApiResponse<T>>(url, form, MULTIPART);
+  return data.data;
+}
+
 export async function apiDelete<T>(url: string, body?: unknown): Promise<T> {
   const { data } = await apiClient.delete<ApiResponse<T>>(url, { data: body });
   return data.data;

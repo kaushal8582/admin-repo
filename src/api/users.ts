@@ -16,3 +16,7 @@ export function suspendUser(id: string, reason: string): Promise<unknown> {
 export function unsuspendUser(id: string, reason?: string): Promise<unknown> {
   return apiPost(`/admin/users/${id}/unsuspend`, { reason });
 }
+
+export function verifyUserEmail(id: string): Promise<unknown> {
+  return apiPost(`/admin/users/${id}/verify-email`);
+}

@@ -209,6 +209,7 @@ export interface LedgerItem {
 
 export interface WithdrawalItem {
   id: string;
+  reference?: string | null;
   user?: OwnerRef | null;
   amountUsd?: number;
   method?: string;

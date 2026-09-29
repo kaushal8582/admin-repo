@@ -23,6 +23,7 @@ export function WithdrawalsPage() {
   const canManage = hasPermission('withdrawals:manage');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
+  const [search, setSearch] = useState('');
   const [detailId, setDetailId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<WithdrawalDialogTarget | null>(null);
 
@@ -30,16 +31,26 @@ export function WithdrawalsPage() {
   const closeDialog = useCallback(() => setDialog(null), []);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['withdrawals', page, statusFilter],
+    queryKey: ['withdrawals', page, statusFilter, search],
     queryFn: () =>
       listWithdrawals({
         page,
         limit: 25,
         status: statusFilter || undefined,
+        search: search || undefined,
       }),
   });
 
   const columns: DataTableColumn<WithdrawalItem>[] = [
+    {
+      key: 'reference',
+      header: 'Payment ID',
+      render: (row) => (
+        <span className="whitespace-nowrap font-mono text-xs font-medium text-foreground">
+          {row.reference || '—'}
+        </span>
+      ),
+    },
     {
       key: 'user',
       header: 'User',
@@ -100,6 +111,12 @@ export function WithdrawalsPage() {
         rowKey={(r) => r.id}
         onPageChange={setPage}
         onRowClick={(row) => setDetailId(row.id)}
+        search={search}
+        searchPlaceholder="Search payment ID or transaction ID…"
+        onSearchChange={(value) => {
+          setSearch(value.trim());
+          setPage(1);
+        }}
         toolbar={
           <select
             value={statusFilter}

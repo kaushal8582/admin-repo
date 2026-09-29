@@ -156,6 +156,9 @@ function ActionDialogBody({
               {title}
             </h2>
             <p className="mt-1 text-sm text-muted">
+              {payout.reference ? (
+                <span className="font-mono text-foreground">{payout.reference} · </span>
+              ) : null}
               {formatUsd(payout.amountUsd)} · {payout.user?.email || 'user'} ·{' '}
               {withdrawalStatusLabel(payout.status)}
             </p>

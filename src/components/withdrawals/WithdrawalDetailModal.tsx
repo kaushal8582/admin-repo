@@ -130,7 +130,23 @@ export function WithdrawalDetailModal({
       >
         <div className="flex items-start justify-between gap-3 border-b border-border p-5">
           <div>
-            <p className="text-xs uppercase tracking-wide text-muted">Withdrawal</p>
+            <div className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-muted">
+              <span>Withdrawal</span>
+              {data?.reference ? (
+                <>
+                  <span>·</span>
+                  <span className="font-mono normal-case text-foreground">{data.reference}</span>
+                  <button
+                    type="button"
+                    onClick={() => copy(data.reference as string, 'Payment ID')}
+                    className="rounded p-0.5 hover:text-foreground"
+                    aria-label="Copy payment ID"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                </>
+              ) : null}
+            </div>
             <p className="mt-1 font-display text-2xl font-semibold text-foreground">
               {data ? formatUsd(data.amountUsd) : '—'}
             </p>

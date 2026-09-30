@@ -13,6 +13,7 @@ import { VideosPage } from './pages/videos/VideosPage';
 import { VideoDetailPage } from './pages/videos/VideoDetailPage';
 import { ReportsPage } from './pages/reports/ReportsPage';
 import { ReportDetailPage } from './pages/reports/ReportDetailPage';
+import { ContactMessagesPage } from './pages/ContactMessagesPage';
 import { OgEarnPage } from './pages/OgEarnPage';
 import { EarningsPage } from './pages/EarningsPage';
 import { WithdrawalsPage } from './pages/WithdrawalsPage';
@@ -66,6 +67,10 @@ export default function App() {
                 <Route element={<PermissionRoute permission="reports:view" />}>
                   <Route path="/reports" element={<ReportsPage />} />
                   <Route path="/reports/:id" element={<ReportDetailPage />} />
+                </Route>
+
+                <Route element={<PermissionRoute permission="contact:view" />}>
+                  <Route path="/contact-messages" element={<ContactMessagesPage />} />
                 </Route>
 
                 <Route element={<PermissionRoute permission="earnings:view" />}>

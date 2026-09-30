@@ -12,6 +12,10 @@ const STATUS_STYLES: Record<string, string> = {
   under_review: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
   processing: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
   approved: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
+  new: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
+  read: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  replied: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+  closed: 'bg-slate-500/15 text-slate-300 border-slate-500/30',
 
   banned: 'bg-red-500/15 text-red-300 border-red-500/30',
   suspended: 'bg-red-500/15 text-red-300 border-red-500/30',

@@ -17,6 +17,8 @@ export type Permission =
   | 'videos:delete'
   | 'reports:view'
   | 'reports:manage'
+  | 'contact:view'
+  | 'contact:manage'
   | 'earnings:view'
   | 'earnings:adjust'
   | 'withdrawals:view'
@@ -230,6 +232,32 @@ export interface WithdrawalItem {
   createdAt?: string;
   updatedAt?: string;
   [key: string]: unknown;
+}
+
+export type ContactStatus = 'NEW' | 'READ' | 'REPLIED' | 'CLOSED';
+
+export interface ContactMessageItem {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  status: ContactStatus;
+  /** Truncated in list responses; full text in detail. */
+  message: string;
+  adminNotes?: string | null;
+  readAt?: string | null;
+  repliedAt?: string | null;
+  closedAt?: string | null;
+  handledBy?: { id: string; name?: string; email?: string } | null;
+  userAgent?: string | null;
+  ipAddress?: string | null;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ContactStats {
+  counts: Record<ContactStatus, number>;
+  total: number;
 }
 
 export interface WithdrawalEvent {

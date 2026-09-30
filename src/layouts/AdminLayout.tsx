@@ -18,8 +18,11 @@ import {
   Menu,
   X,
   UserRound,
+  Inbox,
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../auth/AuthContext';
+import { getContactStats } from '../api/contact';
 import { cn, formatRole } from '../lib/utils';
 
 interface NavItem {
@@ -28,6 +31,7 @@ interface NavItem {
   icon: ReactNode;
   permission?: string | string[];
   end?: boolean;
+  badgeKey?: 'contactNew';
 }
 
 interface NavSection {
@@ -53,6 +57,13 @@ const SECTIONS: NavSection[] = [
       { to: '/users', label: 'Users', icon: <Users className="h-4 w-4" />, permission: 'users:view' },
       { to: '/videos', label: 'Videos', icon: <Video className="h-4 w-4" />, permission: 'videos:view' },
       { to: '/reports', label: 'Reports', icon: <Flag className="h-4 w-4" />, permission: 'reports:view' },
+      {
+        to: '/contact-messages',
+        label: 'Contact Messages',
+        icon: <Inbox className="h-4 w-4" />,
+        permission: 'contact:view',
+        badgeKey: 'contactNew',
+      },
     ],
   },
   {
@@ -147,9 +158,11 @@ const SECTIONS: NavSection[] = [
 function SidebarNav({
   onNavigate,
   hasPermission,
+  badges,
 }: {
   onNavigate?: () => void;
   hasPermission: (p: string | string[]) => boolean;
+  badges: Partial<Record<NonNullable<NavItem['badgeKey']>, number>>;
 }) {
   return (
     <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
@@ -182,7 +195,12 @@ function SidebarNav({
                     }
                   >
                     {item.icon}
-                    {item.label}
+                    <span className="flex-1">{item.label}</span>
+                    {item.badgeKey && badges[item.badgeKey] ? (
+                      <span className="rounded-full bg-sky-500/20 px-1.5 text-xs font-medium tabular-nums text-sky-300">
+                        {badges[item.badgeKey]}
+                      </span>
+                    ) : null}
                   </NavLink>
                 </li>
               ))}
@@ -198,6 +216,15 @@ export function AdminLayout() {
   const { user, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const canViewContact = hasPermission('contact:view');
+  const { data: contactStats } = useQuery({
+    queryKey: ['contact-stats'],
+    queryFn: getContactStats,
+    enabled: canViewContact,
+    refetchInterval: 60_000,
+  });
+  const contactNew = contactStats?.counts.NEW ?? 0;
 
   const sidebar = useMemo(
     () => (
@@ -215,6 +242,7 @@ export function AdminLayout() {
         <SidebarNav
           hasPermission={hasPermission}
           onNavigate={() => setMobileOpen(false)}
+          badges={{ contactNew }}
         />
 
         <div className="border-t border-border p-3">
@@ -236,7 +264,7 @@ export function AdminLayout() {
         </div>
       </div>
     ),
-    [hasPermission, logout, navigate, user?.name, user?.role]
+    [hasPermission, logout, navigate, user?.name, user?.role, contactNew]
   );
 
   return (
